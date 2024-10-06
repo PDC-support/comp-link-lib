@@ -34,19 +34,18 @@ style: |
 
 ## Johan Hellsvik
 
-
-
 ---
 
 # Contents
 
 - Concepts: compilers, linkers, libraries
+- The Gnu Compiler Collection (GCC)
 - Building a Fortran library and a Fortran program with
   - static linking
   - dynamic dynamic linking
 - Building and running code on large clusters
 - Building a C program with dynamical libraries
-  - with linking to a CPE provided library
+  - with linking to a Cray Parallel Environment (PE) provided library
   - to a user/staff installed optional library
 
 ---
@@ -61,13 +60,112 @@ style: |
 
 # The GCC compiler suite
 
+- The GNU Compiler Collection includes front ends for C, C++, Fortran and a few other languages.
+
+Reference: https://gcc.gnu.org/
+
+
 ---
 
 # GCC intermediate steps
 
+### The four steps of compilation with GCC
+- Preprocessing:
+- Compilation: Converts the preprocessed code to assembly code
+- Assembly: Converts assembly code to machine code object files
+- Linking: Connects object files and libraries to executable code
+
+---
+
+# Hello world in C and Fortran
+
+<div class="columns">
+<div class="columns-left">
+
+C: hello_world.c
+```
+#include <stdio.h>
+int main() {
+  printf("Hello world\n");
+  return 0
+}
+```
+</div>
+<div class="columns-right">
+
+Fortran: hello_world.f90
+```
+program hello_world
+  write(*,'(a)') 'Hello world'
+end program hello_world
+```
+
+</div>
+</div>
+
+### Build with
+
+```
+gcc hello_world.c -o hello_world_c.x
+gfortran hello_world.f90 -o hello_world_fortran.x
+```
+
+### Run with
+
+```
+.\hello_world_c.x
+.\hello_world_fortran.x
+```
+
 ---
 
 ## Building a Fortran program with multiple source code files
+
+parameters.f90
+```
+module parameters
+   implicit none
+   integer, parameter :: snglprec = selected_real_kind(6, 37)   !< define precision for single reals
+   integer, parameter :: dblprec = selected_real_kind(15, 307)  !< define precision for double reals
+   integer, parameter :: qdprec = selected_real_kind(33, 4931)  !< define precision for quad reals
+end module parameters
+```
+
+crossproduct.f90
+```
+!cross product of two 3-vectors a and b
+subroutine crossproduct(a,b,c)
+  use parameters
+  implicit none
+  real(dblprec), dimension(3), intent(in) :: a  !< Left factor
+  real(dblprec), dimension(3), intent(in) :: b  !< Right factor
+  real(dblprec), dimension(3), intent(out) :: c  !< The cross product of a and b
+  c(1) = a(2) * b(3) - a(3) * b(2)
+  c(2) = a(3) * b(1) - a(1) * b(3)
+  c(3) = a(1) * b(2) - a(2) * b(1)
+  return
+end subroutine crossproduct
+```
+
+---
+
+mathdemo.f90
+```
+program mathdemo
+  use parameters
+  implicit none
+  real(dblprec), dimension(3) :: x,y,z
+  x = (/7, 6, 3/)
+  y=  (/8, 9, 5/)
+  call crossproduct(x,y,z)
+  write(*,10001) 'The cross product of'
+  write(*,10002)  'x=', x, 'and'
+  write(*,10002)  'y=', y, 'is'
+  write(*,10002)  'z=', z
+10001 format (a,f12.6,a)
+10002 format (a,3f12.6)
+end program mathdemo
+```
 
 ---
 
