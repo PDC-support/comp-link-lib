@@ -5,3 +5,4 @@ rm *.mod
 rm *.a
 rm *.o
 rm *.x
+rm a.out
