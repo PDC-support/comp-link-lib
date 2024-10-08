@@ -36,6 +36,18 @@ style: |
 
 ---
 
+# Example code
+
+The lesson and the code examples are edited on
+
+https://github.com/PDC-support/comp-link-lib
+
+Obtain the code by cloning the git repository
+
+`git clone https://github.com/PDC-support/comp-link-lib.git`
+
+---
+
 # Contents
 
 - Concepts: compilers, linkers, libraries
@@ -52,9 +64,9 @@ style: |
 
 # Concepts: compilers, linkers, libraries
 
----
-
-# Hello world in C and in Fortran
+- Compilers: A compiler parses the source code and generates object files and executable files. Under the hood a compiler invokes assemblers and linkers.
+- Linkers: A tool to combine two or more or more object files into executable files. Linking can be static or dynamic.
+- Libraries: Collection of object files for the purpose of re-use of functionality for different programs. Libraries can be static or dynamic.
 
 ---
 
@@ -64,14 +76,13 @@ style: |
 
 Reference: https://gcc.gnu.org/
 
-
 ---
 
 # GCC intermediate steps
 
 ### The four steps of compilation with GCC
-- Preprocessing:
-- Compilation: Converts the preprocessed code to assembly code
+- Preprocessing: Inserts contents of header files. Removes comments
+- Compilation: Converts the preprocessed code to assembly code. The completion is a complex process that proceed in multiple steps.
 - Assembly: Converts assembly code to machine code object files
 - Linking: Connects object files and libraries to executable code
 
@@ -82,18 +93,18 @@ Reference: https://gcc.gnu.org/
 <div class="columns">
 <div class="columns-left">
 
-C: hello_world.c
+#### C code: hello_world.c
 ```
 #include <stdio.h>
 int main() {
   printf("Hello world\n");
-  return 0
+  return 0;
 }
 ```
 </div>
 <div class="columns-right">
 
-Fortran: hello_world.f90
+#### Fortran code: hello_world.f90
 ```
 program hello_world
   write(*,'(a)') 'Hello world'
@@ -103,25 +114,33 @@ end program hello_world
 </div>
 </div>
 
-### Build with
+<div class="columns">
+<div class="columns-left">
 
+#### Build and run C code
 ```
 gcc hello_world.c -o hello_world_c.x
+./hello_world_c.x
+```
+</div>
+<div class="columns-right">
+
+#### Build and run Fortran code
+```
 gfortran hello_world.f90 -o hello_world_fortran.x
-```
-
-### Run with
-
-```
-.\hello_world_c.x
-.\hello_world_fortran.x
+./hello_world_fortran.x
 ```
 
 ---
 
 ## Building a Fortran program with multiple source code files
 
-parameters.f90
+In this example we are working with a small Fortran program with the three source code files. The program is calculating the cross product of two vectors by calling a subroutine.
+
+
+
+#### parameters.f90
+A source code file that defines custom kinds of real numbers
 ```
 module parameters
    implicit none
@@ -131,7 +150,10 @@ module parameters
 end module parameters
 ```
 
-crossproduct.f90
+---
+
+#### crossproduct.f90
+The subroutine in which the cross product is calculated
 ```
 !cross product of two 3-vectors a and b
 subroutine crossproduct(a,b,c)
@@ -149,7 +171,8 @@ end subroutine crossproduct
 
 ---
 
-mathdemo.f90
+#### mathdemo.f90
+The main program. Here two vectors are defined and assigned to values, and a call made to the subroutine crossproduct.
 ```
 program mathdemo
   use parameters
@@ -184,7 +207,7 @@ gfortran parameters.f90 crossproduct.f90 mathdemo.f90 -o mathdemo.x
 # Building with static linking to library
 
 Compile the source code files parameters.f90 and crossproduct.f90.
-Create a library with the command ar
+Create a library with the command `ar`
 
 ```
 gfortran -c parameters.f90 crossproduct.f90
@@ -359,7 +382,7 @@ export EBROOTOPENBLAS=/pdc/software/23.12/eb/software/openblas/0.3.28-cpeGNU-23.
 
 ---
 
-# Check the linked libraries
+# Check which shared libraries are needed in runtime
 
 ```
 ldd dgemm_test_craylibsci.x
@@ -371,7 +394,7 @@ ldd dgemm_test_openblas.x
 
 ---
 
-# Check the linked libraries
+# Check which shared libraries are needed in runtime
 
 ```
 ldd dgemm_test_craylibsci.x
@@ -431,6 +454,8 @@ srun -n 1 ./fftw_test.x
 # Compilation of large program
 
 * Examples at https://www.pdc.kth.se/software
+
+* See for instance instructions for building the density functional theory program VASP https://www.pdc.kth.se/software/software/VASP/cpe23.12/6.4.3-vanilla/index_building.html
 
 ---
 
