@@ -64,9 +64,9 @@ Obtain the code by cloning the git repository
 
 # Concepts: compilers, linkers, libraries
 
-- Compilers: A compiler parses the source code and generates object files and executable files. Under the hood a compiler invokes assemblers and linkers.
+- Compilers: A compiler parses the source code and generates object files and executable files. Under the hood a compiler invokes an assembler and a linker.
 - Linkers: A tool to combine two or more or more object files into executable files. Linking can be static or dynamic.
-- Libraries: Collection of object files for the purpose of re-use of functionality for different programs. Libraries can be static or dynamic.
+- Libraries: Collection of object files for the purpose of re-use of functionality for different programs. Libraries can be static libraries or shared dynamic libraries.
 
 ---
 
@@ -82,7 +82,7 @@ Reference: https://gcc.gnu.org/
 
 ### The four steps of compilation with GCC
 - Preprocessing: Inserts contents of header files. Removes comments
-- Compilation: Converts the preprocessed code to assembly code. The completion is a complex process that proceed in multiple steps.
+- Compilation: Converts the preprocessed code to assembly code. The compilation is a complex process that proceed in multiple steps.
 - Assembly: Converts assembly code to machine code object files
 - Linking: Connects object files and libraries to executable code
 
@@ -135,7 +135,7 @@ gfortran hello_world.f90 -o hello_world_fortran.x
 
 ## Building a Fortran program with multiple source code files
 
-In this example we are working with a small Fortran program with the three source code files. The program is calculating the cross product of two vectors by calling a subroutine.
+In this example we are working with a small Fortran program with three source code files. The program is calculating the cross product of two vectors by calling a subroutine.
 
 
 
@@ -211,20 +211,20 @@ Create a library with the command `ar`
 
 ```
 gfortran -c parameters.f90 crossproduct.f90
-ar r libcrossproduct.a parameters.o
+ar r libcrossproduct.a parameters.o crossproduct.o
 ```
 
 View contents of the library
 
 ```
-ar t libcrossproduct.a parameters.o
+ar t libcrossproduct.a
 parameters.o
 crossproduct.o
 ```
 Build program mathdemo with static linking to the library
 
 ```
-gfortran mathdemo.f90 libcrossproduct.a -o mathdemo.x
+gfortran -static mathdemo.f90 libcrossproduct.a -o mathdemo.x
 ```
 
 ---
@@ -238,18 +238,17 @@ gfortran -fpic -c parameters.f90 crossproduct.f90
 gfortran -shared -o libcrossproduct.so parameters.o crossproduct.o
 ```
 
-Compile mathdemo.f90
+Compile `mathdemo.f90`
 ```
 gfortran -c mathdemo.f90
 ```
 
-Link mathdemo.o to libcrossproduct.so
+Link mathdemo.o to `libcrossproduct.so` and test run `mathdemo.x`
 
 ```
 gfortran mathdemo.o -o mathdemo.x  -L`pwd` -lcrossproduct
+LD_LIBRARY_PATH=`pwd`:$LD_LIBRARY_PATH ./mathdemo.x
 ```
-
-
 ---
 
 # Building and running code on large clusters
