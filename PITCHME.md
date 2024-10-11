@@ -70,6 +70,15 @@ Obtain the code by cloning the git repository
 
 ---
 
+# Use static or dynamic linking?
+
+- With static linking all the functionality of a program gets put in an executable file.
+- Dynamic linking allows a shared library to be updated independentely of the applications that are using it.
+- In general dynamic linking is preferred
+- Dynamic linking is the most common method on Linux systems
+
+---
+
 # The GCC compiler suite
 
 - The GNU Compiler Collection includes front ends for C, C++, Fortran and a few other languages.
